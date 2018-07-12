@@ -61,7 +61,7 @@ products_df_melt['inventory_item_id'] = products_df_melt['inventory_item_id'].ap
 products_df_melt['sku'] = products_df_melt['sku'].replace(r'\s+',np.NaN,regex=True).replace('',np.nan)
 products_df_melt['sku'] = products_df_melt['sku'].fillna(products_df_melt['title'])
 products_df_melt = products_df_melt.dropna(subset = ['admin_graphql_api_id', 'value'])
-products_df_melt[products_df_melt['id_1'] == 8343952818224]
+# products_df_melt[products_df_melt['id_1'] == 8343952818224]
 
 # To double check for accuracy for a single id_1
 # products_df_melt_single = products_df_melt[products_df_melt['id_1'] == 162811740208]
