@@ -16,11 +16,11 @@ url_products = 'https://paulas-choice-malaysia.myshopify.com/admin/products.json
 products_request = requests.get(url_products, auth=HTTPBasicAuth(username, password)).text
 products_json = json.loads(products_request)
 products_df = pd.io.json.json_normalize(products_json, record_path='products').drop(['options', 'admin_graphql_api_id', 'body_html', 'image', 'images', 'vendor', 'published_scope', 'template_suffix', 'created_at', 'updated_at', 'published_at'], axis = 1)
-
+products_df = products_df[products_df.handle.str.contains('pcm-rewards') == False]
 # products_df.shape
 # products_df['variants'][0][0]['inventory_item_id']
 
-products_df_concat = pd.concat([products_df, products_df.variants.apply(pd.Series)], axis =1).drop('variants', axis = 1)
+products_df_concat = pd.concat([products_df.drop(['id', 'variants'], axis = 1), products_df.variants.apply(pd.Series)], axis =1)
 products_df_melt = products_df_concat.melt(id_vars=products_df_concat.columns[:-8])#.rename(columns = {'id': 'id_1', 'title': 'title_1'} )#.dropna(subset = ['created_at'])
 
 # Expand value column (dict entries) into multiple columns using pd.Series apply function
@@ -50,13 +50,19 @@ products_df_melt['created_at'] = products_df_melt['created_at'].astype("datetime
 # products_df_melt['published_at'] = products_df_melt['published_at'].astype("datetime64[ns]")
 products_df_melt['updated_at'] = products_df_melt['updated_at'].astype("datetime64[ns]")
 
-products_df_melt
+products_df_melt['snapshot_datetime'] = datetime.datetime.now()
 
-products_df_melt['sku'] = products_df_melt['sku'].replace(r'\s+',np.NaN,regex=True).replace('',np.nan)
-products_df_melt['sku'] = products_df_melt['sku'].fillna(products_df_melt['title'])
-products_df_melt = products_df_melt.dropna(subset = ['admin_graphql_api_id', 'value'])
+products_df_melt.to_csv('C:/Users/limzi/OneDrive/Forecasting & Reporting/Jeff Files/PowerBi Files/shopify_pcmy_inventory/pcmy_inventory_api_{}.csv'.format(str(datetime.date.today())))
 
-products_df_melt.drop(columns = ['value', 'admin_graphql_api_id', 'options'], axis =1)
+
+
+# To replace rows without sku number with its corresponding title from another column
+# products_df_melt['sku'] = products_df_melt['sku'].replace(r'\s+',np.NaN,regex=True).replace('',np.nan)
+# products_df_melt['sku'] = products_df_melt['sku'].fillna(products_df_melt['title'])
+# products_df_melt = products_df_melt.dropna(subset = ['admin_graphql_api_id', 'value'])
+# products_df_melt.drop(columns = ['value', 'admin_graphql_api_id', 'options'], axis =1)
+
+
 # products_df_melt[products_df_melt['id_1'] == 8343952818224]
 
 # To double check for accuracy for a single id_1
