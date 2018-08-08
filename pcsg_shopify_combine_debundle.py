@@ -4,7 +4,7 @@ import pandas as pd
 from glob import glob
 pd.options.display.max_columns = 999
 
-folder_location = glob('C:\\Users\limzi\OneDrive\Forecasting & Reporting\Jeff Files\PowerBi Files\shopify_pcmy_original\*.csv')
+folder_location = glob('C:\\Users\limzi\OneDrive\Forecasting & Reporting\Jeff Files\PowerBi Files\pcsg_shopify\*.csv')
 
 pcsg_shopify = pd.concat([pd.read_csv(x, parse_dates=['Paid at', 'Created at'], date_parser=lambda x: pd.to_datetime(x.rpartition('+')[0]), dtype={'Lineitem sku': 'str', 'Name': 'str'}) for x in folder_location] ,ignore_index=True)
 
@@ -46,4 +46,4 @@ pcsg_shopify_simple['child_subtotal_quantity'].fillna(pcsg_shopify_simple['Linei
 pcsg_shopify_simple['bundle_status'] = pcsg_shopify_simple['parent_name'].apply(lambda x: 0 if pd.isna(x) else 1)
 
 # keep_merge_columns = ['Name', 'Email', 'Paid at', 'Subtotal', 'Shipping', 'Taxes', 'Total', 'Discount Code', 'Discount Amount', 'Created at', 'Lineitem quantity', 'Lineitem name', 'Lineitem price', 'Lineitem compare at price', 'Lineitem sku', 'Lineitem discount', 'parent_sku', 'parent_name', 'child_sku', 'child_name', 'child_quantity',  'child_subtotal_quantity', 'bundle_status']
-pcsg_shopify_simple.to_csv('C:\\Users\limzi\OneDrive\Forecasting & Reporting\Jeff Files\PowerBi Files\shopify_pcmy_debundled\pcsg_shopify_orders_debundled.csv')
+pcsg_shopify_simple.to_csv('C:\\Users\limzi\OneDrive\Forecasting & Reporting\Jeff Files\PowerBi Files\pcsg_shopify_debundled\pcsg_shopify_orders_debundled.csv')

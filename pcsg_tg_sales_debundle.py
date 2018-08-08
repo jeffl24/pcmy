@@ -4,11 +4,11 @@ import pandas as pd
 from glob import glob
 pd.options.display.max_columns = 999
 
+# list out all the files to be looped and concatenated in a folder
 folder_location = glob('C://Users/limzi/OneDrive/Forecasting & Reporting/Jeff Files/PowerBi Files/pcsg_tg_sales/*.csv')
 
-pcsg_tg_sales = pd.concat([pd.read_csv(x,parse_dates=['Day'], dayfirst=True, dtype={'Variant SKU': 'str'}) for x in folder_location] ,ignore_index=True)
-
-# pcsg_tg_sales.sort_values('Day', ascending = False)
+# Concatenate the files, convert the date datatype, sort by most recent transactions, then by customer name
+pcsg_tg_sales = pd.concat([pd.read_csv(x,parse_dates=['Day'], dayfirst=True, dtype={'Variant SKU': 'str'}) for x in folder_location] ,ignore_index=True).sort_values(['Day', 'Customer Name'], ascending=False)
 
 sku_master = pd.read_excel("C:/Users/limzi/OneDrive/Forecasting & Reporting/PCSG Master List.xlsx", sheet_name='SKU List' )
 
