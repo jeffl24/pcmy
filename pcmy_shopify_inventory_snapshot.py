@@ -16,6 +16,8 @@ url_products = 'https://paulas-choice-malaysia.myshopify.com/admin/products.json
 products_request = requests.get(url_products, auth=HTTPBasicAuth(username, password)).text
 products_json = json.loads(products_request)
 products_df = pd.io.json.json_normalize(products_json, record_path='products').drop(['options', 'admin_graphql_api_id', 'body_html', 'image', 'images', 'vendor', 'published_scope', 'template_suffix', 'created_at', 'updated_at', 'published_at'], axis = 1)
+
+# , 'delayed_sellable_online_quantity', 'fulfillment_service'
 products_df = products_df[products_df.handle.str.contains('pcm-rewards') == False]
 # products_df.shape
 # products_df['variants'][0][0]['inventory_item_id']
@@ -25,7 +27,7 @@ products_df_melt = products_df_concat.melt(id_vars=products_df_concat.columns[:-
 
 # Expand value column (dict entries) into multiple columns using pd.Series apply function
 # products_df_melt.value.apply(pd.Series)
-products_df_melt = pd.concat([products_df_melt, products_df_melt.value.apply(pd.Series)], axis =1 , join = 'outer').drop(['value', 'admin_graphql_api_id', 'options'], axis = 1)# .drop(['index', 'value', 'id_1'], axis =1 )
+products_df_melt = pd.concat([products_df_melt, products_df_melt.value.apply(pd.Series)], axis =1 , join = 'outer').drop(['value', 'admin_graphql_api_id', 'options', 'delayed_sellable_online_quantity', 'fulfillment_service'], axis = 1)# .drop(['index', 'value', 'id_1'], axis =1 )
 
 products_df_melt = products_df_melt.dropna(subset = ['created_at'])
 

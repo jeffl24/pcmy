@@ -45,5 +45,25 @@ pcsg_shopify_simple['child_subtotal_quantity'].fillna(pcsg_shopify_simple['Linei
 
 pcsg_shopify_simple['bundle_status'] = pcsg_shopify_simple['parent_name'].apply(lambda x: 0 if pd.isna(x) else 1)
 
+#
+def replace_bundle_products(x):
+    '''
+    This function corrects the values at column 'lineitem compare at price' to indicate the
+    individual non-discounted price of the SKU
+    '''
+    if (x['Lineitem compare at price'] == 0 or np.isnan(x['Lineitem compare at price'])):
+        # return x['Lineitem price']
+        if np.isnan(x['Price']):
+            return x['Lineitem price']
+        else:
+            return x['Price']
+    else:
+        return x['Lineitem compare at price']
+pcsg_shopify_simple['Lineitem compare at price'] = pcsg_shopify_simple.apply(replace_bundle_products, axis = 1)
+
+# Corrects the "Lineitem price" column
+pcsg_shopify_simple['Lineitem price'] = pcsg_shopify_simple.apply(lambda x: x['Lineitem price'] if np.isnan(x['Discount Unit Price']) else x['Discount Unit Price'], axis = 1)
+
 # keep_merge_columns = ['Name', 'Email', 'Paid at', 'Subtotal', 'Shipping', 'Taxes', 'Total', 'Discount Code', 'Discount Amount', 'Created at', 'Lineitem quantity', 'Lineitem name', 'Lineitem price', 'Lineitem compare at price', 'Lineitem sku', 'Lineitem discount', 'parent_sku', 'parent_name', 'child_sku', 'child_name', 'child_quantity',  'child_subtotal_quantity', 'bundle_status']
+
 pcsg_shopify_simple.to_csv('C:\\Users\limzi\OneDrive\Forecasting & Reporting\Jeff Files\PowerBi Files\pcsg_shopify_debundled\pcsg_shopify_orders_debundled.csv')
